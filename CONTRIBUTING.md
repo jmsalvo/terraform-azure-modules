@@ -15,25 +15,49 @@
 |------|---------|---------|
 | Terraform | >= 1.6 | `fmt`, `validate`, `test` |
 | tflint | latest | lint + azurerm ruleset |
-| terraform-docs | >= 0.19 | module input/output tables |
+| terraform-docs | v0.24.x (match CI) | module input/output tables |
 | trivy | latest | IaC misconfiguration scan |
 | Go | >= 1.23 | Terratest example only |
-| pre-commit | optional | runs the above on `git commit` |
+| pre-commit | optional | runs the above on `git commit` (macOS/Linux, or Windows + Git Bash) |
+
+Windows contributors: `scripts\check.ps1` runs the same checks natively — see below.
 
 ## Local checks
 
+Run the same checks CI runs, before pushing.
+
+**Windows** (no bash needed):
+
+```powershell
+.\scripts\check.ps1          # check everything
+.\scripts\check.ps1 -Fix     # also auto-run `terraform fmt` + regenerate docs
+.\scripts\check.ps1 -IncludeTerratest
+```
+
+**macOS / Linux** — either the pre-commit hooks:
+
 ```bash
-terraform fmt -recursive
+pipx install pre-commit   # or: pip install pre-commit
+pre-commit install        # then hooks run on every `git commit`
+pre-commit run --all-files
+```
+
+or by hand:
+
+```bash
+terraform fmt -check -recursive
 find modules -name '*.tf' -printf '%h\n' | sort -u | while read -r d; do
   terraform -chdir="$d" init -backend=false && terraform -chdir="$d" validate
 done
-tflint --recursive
-terraform -chdir=modules/naming test
-terraform-docs markdown table --output-file README.md --output-mode inject modules/naming
-trivy config .
+tflint --init && tflint --recursive
+find modules -type d -name tests | while read -r t; do terraform -chdir="$(dirname "$t")" test; done
+terraform-docs markdown table --output-file README.md --output-mode inject --output-check modules/naming
+trivy config --config trivy.yaml .
 ```
 
-Or install the hooks once: `pip install pre-commit && pre-commit install`.
+> The `pre-commit` `terraform_*` hooks are bash scripts and need Git Bash on `PATH`.
+> On Windows that often collides with the WSL `bash.exe` shim — use `scripts\check.ps1`
+> instead. CI still runs `.pre-commit-config.yaml`'s tools via dedicated jobs.
 
 ## Adding a module
 

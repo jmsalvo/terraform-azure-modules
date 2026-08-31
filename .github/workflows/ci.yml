@@ -70,15 +70,33 @@ jobs:
 
   docs:
     runs-on: ubuntu-latest
+    env:
+      # Keep in lockstep with the version contributors run locally
+      # (CONTRIBUTING.md tooling table) and with scripts/check.ps1.
+      TERRAFORM_DOCS_VERSION: "0.24.0"
     steps:
       - uses: actions/checkout@v4
-      # Add each new module dir here (comma-separated) as it is created.
-      - uses: terraform-docs/gh-actions@v1
-        with:
-          working-dir: modules/naming
-          output-file: README.md
-          output-method: inject
-          fail-on-diff: true
+      - name: install terraform-docs (pinned, checksum-verified)
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}"
+          tarball="terraform-docs-v${TERRAFORM_DOCS_VERSION}-linux-amd64.tar.gz"
+          curl -fsSLo "${tarball}" "${base}/${tarball}"
+          curl -fsSLo sums.txt "${base}/terraform-docs-v${TERRAFORM_DOCS_VERSION}.sha256sum"
+          grep " ${tarball}\$" sums.txt | sha256sum -c -
+          tar -xzf "${tarball}" terraform-docs
+          sudo install terraform-docs /usr/local/bin/terraform-docs
+          rm "${tarball}" sums.txt terraform-docs
+          terraform-docs version
+      - name: check module docs are current
+        shell: bash
+        run: |
+          set -euo pipefail
+          for dir in modules/*/; do
+            terraform-docs markdown table --output-file README.md --output-mode inject "${dir}"
+          done
+          git diff --exit-code
 
   trivy:
     runs-on: ubuntu-latest
