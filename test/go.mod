@@ -1,0 +1,8 @@
+module github.com/jmsalvo/terraform-azure-modules/test
+
+go 1.23
+
+require (
+	github.com/gruntwork-io/terratest v0.47.2
+	github.com/stretchr/testify v1.9.0
+)
