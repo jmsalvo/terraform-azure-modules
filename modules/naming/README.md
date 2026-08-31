@@ -65,7 +65,7 @@ terraform -chdir=modules/naming test
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 1.6.0 |
 
 ## Providers
@@ -83,7 +83,7 @@ No resources.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_cost_center"></a> [cost_center](#input_cost_center) | Optional cost center identifier; added to the baseline tags as cost_center when set. | `string` | `null` | no |
 | <a name="input_environment"></a> [environment](#input_environment) | Deployment environment; one of dev, test, stage, prod, sandbox. | `string` | n/a | yes |
 | <a name="input_instance"></a> [instance](#input_instance) | Instance number for the resource set; rendered zero-padded to three digits. | `number` | `1` | no |
@@ -96,7 +96,7 @@ No resources.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_key_vault_name"></a> [key_vault_name](#output_key_vault_name) | Convenience accessor for names["key_vault"]. |
 | <a name="output_name_prefix"></a> [name_prefix](#output_name_prefix) | The dash-joined name stem shared by every generated name, for example shop-prod-eus2-001. |
 | <a name="output_names"></a> [names](#output_names) | Map of resource type to generated name. Dash-style for most types; compact and length-limited for storage_account, key_vault and container_registry. |

@@ -79,6 +79,9 @@ jobs:
           output-file: README.md
           output-method: inject
           fail-on-diff: true
+          # Keep in lockstep with the version contributors run locally
+          # (CONTRIBUTING.md tooling table).
+          terraform-docs-version: v0.24.0
 
   trivy:
     runs-on: ubuntu-latest
