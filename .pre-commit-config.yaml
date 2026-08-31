@@ -14,8 +14,7 @@ repos:
           - --hook-config=--path-to-file=README.md
           - --hook-config=--add-to-existing-file=true
       - id: terraform_trivy
-        args:
-          - --args=--severity=CRITICAL,HIGH
+        # Severity + exit-code come from ./trivy.yaml (auto-loaded from the repo root).
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
