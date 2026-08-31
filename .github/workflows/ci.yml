@@ -87,7 +87,7 @@ jobs:
       - name: install trivy
         run: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
       - name: trivy config scan
-        run: trivy config --exit-code 1 --severity CRITICAL,HIGH --no-progress .
+        run: trivy config --exit-code 1 --severity CRITICAL,HIGH --skip-version-check .
 
   terratest:
     runs-on: ubuntu-latest
