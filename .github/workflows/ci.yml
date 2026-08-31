@@ -84,12 +84,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aquasecurity/trivy-action@0.24.0
-        with:
-          scan-type: config
-          scan-ref: .
-          exit-code: "1"
-          severity: CRITICAL,HIGH
+      - name: install trivy
+        run: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+      - name: trivy config scan
+        run: trivy config --exit-code 1 --severity CRITICAL,HIGH --no-progress .
 
   terratest:
     runs-on: ubuntu-latest
