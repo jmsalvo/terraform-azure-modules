@@ -147,9 +147,9 @@ variable "default_node_pool" {
 
   validation {
     condition = (
-      var.default_node_pool.min_count == null ||
-      var.default_node_pool.max_count == null ||
-      (var.default_node_pool.min_count >= 1 && var.default_node_pool.max_count >= var.default_node_pool.min_count)
+      var.default_node_pool.min_count == null || var.default_node_pool.max_count == null
+      ? true
+      : var.default_node_pool.min_count >= 1 && var.default_node_pool.max_count >= var.default_node_pool.min_count
     )
     error_message = "when autoscaling, default_node_pool.min_count must be >= 1 and no greater than max_count."
   }

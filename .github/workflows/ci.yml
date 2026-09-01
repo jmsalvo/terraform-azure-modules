@@ -9,7 +9,9 @@ permissions:
   contents: read
 
 env:
-  TERRAFORM_VERSION: "1.9.8"
+  # Match the version contributors run locally (CONTRIBUTING.md). Modules still
+  # declare required_version >= 1.6.0 as their supported floor.
+  TERRAFORM_VERSION: "1.16.0"
 
 jobs:
   fmt:
