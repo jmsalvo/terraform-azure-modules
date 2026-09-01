@@ -13,7 +13,7 @@
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Terraform | >= 1.6 | `fmt`, `validate`, `test` |
+| Terraform | modules need >= 1.6; CI and local use 1.16.x | `fmt`, `validate`, `test` |
 | tflint | latest | lint + azurerm ruleset |
 | terraform-docs | v0.24.x (match CI) | module input/output tables |
 | trivy | latest | IaC misconfiguration scan |

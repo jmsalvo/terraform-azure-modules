@@ -16,7 +16,7 @@ This is the warm-up repo of a larger portfolio; it also sets the conventions
 | [`naming`](modules/naming) | Deterministic Azure resource names and a merged tag map. No providers, no API calls. | Available |
 | [`networking`](modules/networking) | Virtual network, subnets, and optional per-subnet NSGs. | Available |
 | [`key-vault`](modules/key-vault) | RBAC-authorized Key Vault with secure defaults and optional diagnostics. | Available |
-| `aks` | Hardened AKS cluster. | Planned |
+| [`aks`](modules/aks) | Hardened AKS cluster — Entra RBAC, no local accounts, private, workload identity. | Available |
 
 ## How modules relate
 

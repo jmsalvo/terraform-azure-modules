@@ -21,3 +21,7 @@ Versioning is **repo-wide**: one tag covers every module. See
 - `key-vault` module — RBAC-authorized Key Vault with secure defaults (purge
   protection on, public network access off, network default-deny) and an
   optional diagnostic setting. Callers assign their own RBAC roles.
+- `aks` module — hardened AKS cluster: Entra RBAC, `local_account_disabled`,
+  private API server, OIDC issuer + workload identity, Azure Policy add-on,
+  system-assigned identity, Azure CNI + network policy. Optional autoscaling
+  and Container Insights.
