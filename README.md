@@ -14,7 +14,7 @@ This is the warm-up repo of a larger portfolio; it also sets the conventions
 | Module | Purpose | Status |
 |--------|---------|--------|
 | [`naming`](modules/naming) | Deterministic Azure resource names and a merged tag map. No providers, no API calls. | Available |
-| `networking` | VNet / subnets / NSGs. | Planned |
+| [`networking`](modules/networking) | Virtual network, subnets, and optional per-subnet NSGs. | Available |
 | `key-vault` | Key Vault with access model and diagnostics. | Planned |
 | `aks` | Hardened AKS cluster. | Planned |
 
@@ -22,14 +22,16 @@ This is the warm-up repo of a larger portfolio; it also sets the conventions
 
 ```mermaid
 flowchart LR
-    naming[naming] --> networking[networking]
-    naming --> keyvault[key-vault]
-    naming --> aks[aks]
-    naming -. names + tags .-> consumer[your root module]
+    naming[naming] -- names + tags --> root[your root module]
+    root --> networking[networking]
+    root --> keyvault[key-vault]
+    root --> aks[aks]
 ```
 
-`naming` is foundational: other modules take its `names` / `tags` outputs so a
-whole environment shares one convention.
+Modules are **composed in the root module**, not nested. `naming` produces the
+names and tags; the root module passes them into `networking` / `key-vault` /
+`aks` as plain values. Each module stays single-purpose and independently
+testable.
 
 ## Quickstart
 

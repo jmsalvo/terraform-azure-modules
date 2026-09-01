@@ -15,3 +15,6 @@ Versioning is **repo-wide**: one tag covers every module. See
   single Terratest example.
 - `naming` module — deterministic Azure resource naming and tagging with no
   provider and no API calls; `.tftest.hcl` behaviour and input-validation suites.
+- `networking` module — virtual network, subnets, and optional per-subnet NSGs
+  (module-created from `security_rules`, or an externally managed NSG by id).
+  Decoupled from `naming` (plain name inputs). Tests use `mock_provider "azurerm"`.
