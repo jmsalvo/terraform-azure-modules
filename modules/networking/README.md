@@ -80,7 +80,7 @@ Tests use `mock_provider "azurerm"`, so they need no Azure credentials.
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_azurerm"></a> [azurerm](#provider_azurerm) | 4.81.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider_azurerm) | ~> 4.0 |
 
 ## Modules
 

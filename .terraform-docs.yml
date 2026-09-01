@@ -13,7 +13,10 @@ settings:
   hide-empty: false
   html: true
   indent: 2
-  lockfile: true
+  # false: always show the required_providers constraint, never the resolved
+  # version from .terraform.lock.hcl. Keeps output identical whether or not
+  # `terraform init` has been run (CI docs job does not init).
+  lockfile: false
   read-comments: true
   required: true
   sensitive: true
