@@ -18,3 +18,6 @@ Versioning is **repo-wide**: one tag covers every module. See
 - `networking` module — virtual network, subnets, and optional per-subnet NSGs
   (module-created from `security_rules`, or an externally managed NSG by id).
   Decoupled from `naming` (plain name inputs). Tests use `mock_provider "azurerm"`.
+- `key-vault` module — RBAC-authorized Key Vault with secure defaults (purge
+  protection on, public network access off, network default-deny) and an
+  optional diagnostic setting. Callers assign their own RBAC roles.
