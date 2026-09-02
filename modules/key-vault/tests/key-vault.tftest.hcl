@@ -15,7 +15,7 @@ run "uses_rbac_and_secure_defaults" {
   command = plan
 
   assert {
-    condition     = azurerm_key_vault.this.enable_rbac_authorization == true
+    condition     = azurerm_key_vault.this.rbac_authorization_enabled == true
     error_message = "RBAC authorization must be enabled"
   }
 
