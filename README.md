@@ -91,7 +91,8 @@ Consumers pin `?ref=<tag>`. See
 [ADR 0001](docs/decisions/0001-repo-wide-versioning.md) for the rationale and the
 conditions under which this would move to per-module versioning.
 
-Changes are recorded in [`CHANGELOG.md`](CHANGELOG.md).
+Changes are recorded in [`CHANGELOG.md`](CHANGELOG.md). Deferred, per-module
+scope lives in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Contributing
 
