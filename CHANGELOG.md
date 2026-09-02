@@ -9,6 +9,8 @@ Versioning is **repo-wide**: one tag covers every module. See
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-01
+
 ### Added
 - Repository scaffold: layout conventions, credential-free CI (`fmt`, `validate`,
   `tflint`, `terraform test`, `trivy config`, `terraform-docs` drift check) and a
