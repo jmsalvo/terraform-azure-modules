@@ -2,7 +2,7 @@
 
 An Azure **Key Vault** with RBAC authorization and secure defaults.
 
-- **RBAC only** — `enable_rbac_authorization = true`. No access-policy support
+- **RBAC only** — `rbac_authorization_enabled = true`. No access-policy support
   (access policies are legacy). The module creates the vault; **callers assign
   their own roles** (e.g. `Key Vault Secrets Officer`) to the principals that
   need access.

@@ -25,3 +25,9 @@ Versioning is **repo-wide**: one tag covers every module. See
   private API server, OIDC issuer + workload identity, Azure Policy add-on,
   system-assigned identity, Azure CNI + network policy. Optional autoscaling
   and Container Insights.
+
+### Fixed
+- `key-vault` — renamed `enable_rbac_authorization` to `rbac_authorization_enabled`
+  ahead of its removal in azurerm v5.0. Swept `naming`, `networking`, and `aks`
+  for the same class of deprecation warning under Terraform 1.16 / azurerm
+  latest; none found.
