@@ -46,6 +46,13 @@ resource "azurerm_kubernetes_cluster" "this" {
     dns_service_ip = var.dns_service_ip
   }
 
+  dynamic "api_server_access_profile" {
+    for_each = length(var.api_server_authorized_ip_ranges) > 0 ? [1] : []
+    content {
+      authorized_ip_ranges = var.api_server_authorized_ip_ranges
+    }
+  }
+
   dynamic "oms_agent" {
     for_each = var.log_analytics_workspace_id == null ? [] : [var.log_analytics_workspace_id]
     content {

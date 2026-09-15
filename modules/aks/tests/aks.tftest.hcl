@@ -215,3 +215,31 @@ run "user_node_pool_present_when_configured" {
     error_message = "min/max count should be passed through"
   }
 }
+
+run "api_server_access_profile_absent_by_default" {
+  command = plan
+
+  assert {
+    condition     = length(azurerm_kubernetes_cluster.this.api_server_access_profile) == 0
+    error_message = "no api_server_access_profile block should exist without authorized IP ranges"
+  }
+}
+
+run "api_server_access_profile_present_with_ranges" {
+  command = plan
+
+  variables {
+    private_cluster_enabled         = false
+    api_server_authorized_ip_ranges = ["203.0.113.5/32"]
+  }
+
+  assert {
+    condition     = length(azurerm_kubernetes_cluster.this.api_server_access_profile) == 1
+    error_message = "api_server_access_profile should be created when ranges are set"
+  }
+
+  assert {
+    condition     = contains(azurerm_kubernetes_cluster.this.api_server_access_profile[0].authorized_ip_ranges, "203.0.113.5/32")
+    error_message = "authorized_ip_ranges should be passed through"
+  }
+}

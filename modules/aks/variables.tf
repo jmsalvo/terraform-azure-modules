@@ -209,3 +209,9 @@ variable "user_node_pool" {
     error_message = "when autoscaling, user_node_pool.min_count must be >= 1 and no greater than max_count."
   }
 }
+
+variable "api_server_authorized_ip_ranges" {
+  description = "CIDR ranges allowed to reach the API server's public endpoint. Only meaningful when private_cluster_enabled = false — a private cluster has no public endpoint to restrict, so this is a no-op alongside it. Empty (the default) creates no restriction block at all."
+  type        = list(string)
+  default     = []
+}
