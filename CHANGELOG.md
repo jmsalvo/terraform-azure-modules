@@ -9,6 +9,8 @@ Versioning is **repo-wide**: one tag covers every module. See
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-15
+
 ### Added
 - `aks` module — `api_server_authorized_ip_ranges`, for a public API server
   firewalled to an explicit allow list as an alternative to
