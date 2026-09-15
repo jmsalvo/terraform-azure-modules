@@ -1,5 +1,6 @@
 locals {
-  node_pool_autoscaling = var.default_node_pool.min_count != null
+  node_pool_autoscaling      = var.default_node_pool.min_count != null
+  user_node_pool_autoscaling = var.user_node_pool != null && var.user_node_pool.min_count != null
 }
 
 resource "azurerm_kubernetes_cluster" "this" {
@@ -45,12 +46,37 @@ resource "azurerm_kubernetes_cluster" "this" {
     dns_service_ip = var.dns_service_ip
   }
 
+  dynamic "api_server_access_profile" {
+    for_each = length(var.api_server_authorized_ip_ranges) > 0 ? [1] : []
+    content {
+      authorized_ip_ranges = var.api_server_authorized_ip_ranges
+    }
+  }
+
   dynamic "oms_agent" {
     for_each = var.log_analytics_workspace_id == null ? [] : [var.log_analytics_workspace_id]
     content {
       log_analytics_workspace_id = oms_agent.value
     }
   }
+
+  tags = var.tags
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "user" {
+  count = var.user_node_pool == null ? 0 : 1
+
+  name                  = var.user_node_pool.name
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.this.id
+  vm_size               = var.user_node_pool.vm_size
+  vnet_subnet_id        = var.default_node_pool_subnet_id
+  os_disk_size_gb       = var.user_node_pool.os_disk_size_gb
+  mode                  = "User"
+
+  auto_scaling_enabled = local.user_node_pool_autoscaling
+  node_count           = var.user_node_pool.node_count
+  min_count            = var.user_node_pool.min_count
+  max_count            = var.user_node_pool.max_count
 
   tags = var.tags
 }

@@ -23,7 +23,7 @@ platform (it feeds the flagship's `v0.2` milestone).
 data "azurerm_client_config" "current" {}
 
 module "aks" {
-  source = "github.com/jmsalvo/terraform-azure-modules//modules/aks?ref=v0.1.0"
+  source = "github.com/jmsalvo/terraform-azure-modules//modules/aks?ref=v0.2.0"
 
   name                        = "aks-shop-prod-eus2-001"
   resource_group_name         = "rg-shop-prod-eus2-001"
@@ -41,6 +41,19 @@ module "aks" {
     max_count = 6
   }
 
+  # Optional: a public API server firewalled to an allow list, instead of
+  # private_cluster_enabled's default fully-private endpoint.
+  private_cluster_enabled         = false
+  api_server_authorized_ip_ranges = ["203.0.113.5/32"]
+
+  # Optional: a second pool for application workloads, isolated from the
+  # system (kube-system) pool.
+  user_node_pool = {
+    vm_size   = "Standard_D4s_v5"
+    min_count = 1
+    max_count = 4
+  }
+
   tags = module.naming.tags
 }
 ```
@@ -50,10 +63,8 @@ with `naming` / `networking` in the root module.
 
 ## Scope
 
-Out of scope for now (follow-ups): additional node pools, user-assigned identity,
-control-plane diagnostic settings, maintenance windows, the Microsoft Defender
-block, and API-server authorized IP ranges (a private cluster covers the common
-case).
+Out of scope for now (follow-ups): user-assigned identity, control-plane
+diagnostic settings, maintenance windows, the Microsoft Defender block.
 
 ## Tests
 
@@ -86,12 +97,14 @@ No modules.
 | Name | Type |
 | ---- | ---- |
 | [azurerm_kubernetes_cluster.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster) | resource |
+| [azurerm_kubernetes_cluster_node_pool.user](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster_node_pool) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_group_object_ids"></a> [admin_group_object_ids](#input_admin_group_object_ids) | Entra group object IDs granted cluster-admin via Azure RBAC for Kubernetes. | `list(string)` | `[]` | no |
+| <a name="input_api_server_authorized_ip_ranges"></a> [api_server_authorized_ip_ranges](#input_api_server_authorized_ip_ranges) | CIDR ranges allowed to reach the API server's public endpoint. Only meaningful when private_cluster_enabled = false — a private cluster has no public endpoint to restrict, so this is a no-op alongside it. Empty (the default) creates no restriction block at all. | `list(string)` | `[]` | no |
 | <a name="input_azure_policy_enabled"></a> [azure_policy_enabled](#input_azure_policy_enabled) | Enable the Azure Policy add-on. | `bool` | `true` | no |
 | <a name="input_default_node_pool"></a> [default_node_pool](#input_default_node_pool) | Default (system) node pool:<br/>  - name                          pool name (default "system")<br/>  - vm_size                       VM SKU (default "Standard_D2s_v5")<br/>  - node_count                    node count, or initial count when autoscaling (default 2)<br/>  - min_count / max_count         set both to enable the cluster autoscaler<br/>  - os_disk_size_gb               OS disk size in GB (default 64)<br/>  - only_critical_addons_enabled  taint the pool so only critical add-ons schedule (default false) | <pre>object({<br/>    name                         = optional(string, "system")<br/>    vm_size                      = optional(string, "Standard_D2s_v5")<br/>    node_count                   = optional(number, 2)<br/>    min_count                    = optional(number)<br/>    max_count                    = optional(number)<br/>    os_disk_size_gb              = optional(number, 64)<br/>    only_critical_addons_enabled = optional(bool, false)<br/>  })</pre> | `{}` | no |
 | <a name="input_default_node_pool_subnet_id"></a> [default_node_pool_subnet_id](#input_default_node_pool_subnet_id) | Resource ID of the subnet the default node pool runs in (Azure CNI). Compose this from the networking module. | `string` | n/a | yes |
@@ -109,6 +122,7 @@ No modules.
 | <a name="input_service_cidr"></a> [service_cidr](#input_service_cidr) | CIDR for Kubernetes service IPs. Must not overlap the node subnet. | `string` | `"10.100.0.0/16"` | no |
 | <a name="input_tags"></a> [tags](#input_tags) | Tags applied to the cluster. | `map(string)` | `{}` | no |
 | <a name="input_tenant_id"></a> [tenant_id](#input_tenant_id) | Entra tenant ID for cluster RBAC, typically data.azurerm_client_config.current.tenant_id. | `string` | n/a | yes |
+| <a name="input_user_node_pool"></a> [user_node_pool](#input_user_node_pool) | Optional second (user) node pool, for application workloads separate from<br/>the system pool:<br/>  - name             pool name (default "user")<br/>  - vm_size          VM SKU (default "Standard_D2s_v5")<br/>  - node_count       node count, or initial count when autoscaling (default 2)<br/>  - min_count / max_count  set both to enable the cluster autoscaler<br/>  - os_disk_size_gb  OS disk size in GB (default 64)<br/>Null (the default) creates no second pool — every node runs in<br/>default_node_pool, matching v0.1.0 behaviour. | <pre>object({<br/>    name            = optional(string, "user")<br/>    vm_size         = optional(string, "Standard_D2s_v5")<br/>    node_count      = optional(number, 2)<br/>    min_count       = optional(number)<br/>    max_count       = optional(number)<br/>    os_disk_size_gb = optional(number, 64)<br/>  })</pre> | `null` | no |
 | <a name="input_workload_identity_enabled"></a> [workload_identity_enabled](#input_workload_identity_enabled) | Enable Entra Workload Identity on the cluster. | `bool` | `true` | no |
 
 ## Outputs
