@@ -166,3 +166,46 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "user_node_pool" {
+  description = <<-EOT
+    Optional second (user) node pool, for application workloads separate from
+    the system pool:
+      - name             pool name (default "user")
+      - vm_size          VM SKU (default "Standard_D2s_v5")
+      - node_count       node count, or initial count when autoscaling (default 2)
+      - min_count / max_count  set both to enable the cluster autoscaler
+      - os_disk_size_gb  OS disk size in GB (default 64)
+    Null (the default) creates no second pool — every node runs in
+    default_node_pool, matching v0.1.0 behaviour.
+  EOT
+
+  type = object({
+    name            = optional(string, "user")
+    vm_size         = optional(string, "Standard_D2s_v5")
+    node_count      = optional(number, 2)
+    min_count       = optional(number)
+    max_count       = optional(number)
+    os_disk_size_gb = optional(number, 64)
+  })
+  default = null
+
+  validation {
+    condition     = var.user_node_pool == null || var.user_node_pool.node_count >= 1
+    error_message = "user_node_pool.node_count must be at least 1."
+  }
+
+  validation {
+    condition     = var.user_node_pool == null || (var.user_node_pool.min_count == null) == (var.user_node_pool.max_count == null)
+    error_message = "set both user_node_pool.min_count and user_node_pool.max_count to enable autoscaling, or neither."
+  }
+
+  validation {
+    condition = (
+      var.user_node_pool == null || var.user_node_pool.min_count == null || var.user_node_pool.max_count == null
+      ? true
+      : var.user_node_pool.min_count >= 1 && var.user_node_pool.max_count >= var.user_node_pool.min_count
+    )
+    error_message = "when autoscaling, user_node_pool.min_count must be >= 1 and no greater than max_count."
+  }
+}

@@ -169,3 +169,49 @@ run "admin_groups_and_tags_pass_through" {
     error_message = "tags should be applied to the cluster"
   }
 }
+
+run "user_node_pool_absent_by_default" {
+  command = plan
+
+  assert {
+    condition     = length(azurerm_kubernetes_cluster_node_pool.user) == 0
+    error_message = "no user node pool should be created by default"
+  }
+}
+
+run "user_node_pool_present_when_configured" {
+  command = plan
+
+  variables {
+    user_node_pool = {
+      vm_size   = "Standard_B2s"
+      min_count = 1
+      max_count = 2
+    }
+  }
+
+  assert {
+    condition     = length(azurerm_kubernetes_cluster_node_pool.user) == 1
+    error_message = "user node pool should be created when user_node_pool is set"
+  }
+
+  assert {
+    condition     = azurerm_kubernetes_cluster_node_pool.user[0].mode == "User"
+    error_message = "user node pool must use mode = User"
+  }
+
+  assert {
+    condition     = azurerm_kubernetes_cluster_node_pool.user[0].vnet_subnet_id == "/subscriptions/x/resourceGroups/y/providers/Microsoft.Network/virtualNetworks/v/subnets/nodes"
+    error_message = "user node pool should reuse default_node_pool_subnet_id"
+  }
+
+  assert {
+    condition     = azurerm_kubernetes_cluster_node_pool.user[0].auto_scaling_enabled == true
+    error_message = "autoscaling should be on when min/max are set"
+  }
+
+  assert {
+    condition     = azurerm_kubernetes_cluster_node_pool.user[0].min_count == 1 && azurerm_kubernetes_cluster_node_pool.user[0].max_count == 2
+    error_message = "min/max count should be passed through"
+  }
+}

@@ -78,3 +78,40 @@ run "rejects_max_count_below_min_count" {
 
   expect_failures = [var.default_node_pool]
 }
+
+run "rejects_zero_user_node_pool_count" {
+  command = plan
+
+  variables {
+    user_node_pool = {
+      node_count = 0
+    }
+  }
+
+  expect_failures = [var.user_node_pool]
+}
+
+run "rejects_only_min_count_set_user_pool" {
+  command = plan
+
+  variables {
+    user_node_pool = {
+      min_count = 2
+    }
+  }
+
+  expect_failures = [var.user_node_pool]
+}
+
+run "rejects_max_count_below_min_count_user_pool" {
+  command = plan
+
+  variables {
+    user_node_pool = {
+      min_count = 5
+      max_count = 2
+    }
+  }
+
+  expect_failures = [var.user_node_pool]
+}
