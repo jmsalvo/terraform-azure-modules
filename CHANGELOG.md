@@ -9,6 +9,14 @@ Versioning is **repo-wide**: one tag covers every module. See
 
 ## [Unreleased]
 
+### Added
+- `aks` module — `api_server_authorized_ip_ranges`, for a public API server
+  firewalled to an explicit allow list as an alternative to
+  `private_cluster_enabled`'s fully-private endpoint. And an optional second
+  (`user`) node pool via the new `user_node_pool` variable, for isolating
+  system (`kube-system`) and application workloads across pools. Both are
+  additive and backward-compatible — existing callers see no behavior change.
+
 ## [0.1.0] - 2026-09-01
 
 ### Added
